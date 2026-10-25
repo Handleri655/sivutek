@@ -1,0 +1,43 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Gallery from "../components/Gallery.astro";
+import CTA from "../components/CTA.astro";
+import { getReferenssit } from "../lib/content";
+import type { GalleryItem } from "../components/Gallery.astro";
+
+const referenssit = await getReferenssit();
+const items: GalleryItem[] = referenssit.map((entry) => ({
+  title: entry.data.title,
+  summary: entry.data.summary,
+  location: entry.data.location,
+  image: entry.data.image,
+  imageAlt: entry.data.imageAlt,
+}));
+const isEmpty = items.length === 0;
+---
+
+<BaseLayout
+  title="Referenssit"
+  description="Kuvia ja kuvauksia Sivutekin tekemistä remontti-, rakennus- ja LVI-kohteista Pirkanmaalla."
+  noindex={isEmpty}
+>
+  <section class="section wrap">
+    <p class="eyebrow">Kohteet</p>
+    <h1 class="mt-3 text-4xl md:text-5xl">Tehdyt työt</h1>
+    {
+      isEmpty ? (
+        <p class="lede mt-4">
+          Kohdekuvia lisätään tänne, kun ensimmäiset työt on kuvattu. Siihen asti pyydä tarjous tai soita.
+        </p>
+      ) : (
+        <>
+          <p class="lede mt-4">Keittiöasennuksia, viimeistelytöitä, LVI-töitä sekä portaita ja terasseja.</p>
+          <div class="mt-8">
+            <Gallery items={items} />
+          </div>
+        </>
+      )
+    }
+  </section>
+  <CTA />
+</BaseLayout>

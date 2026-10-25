@@ -1,0 +1,20 @@
+---
+interface Props {
+  class?: string;
+  onDark?: boolean;
+}
+
+const { class: className = "", onDark = false } = Astro.props;
+const tile = onDark ? "#f4f1eb" : "#1f2937";
+const line = onDark ? "#1f2937" : "#f4f1eb";
+---
+
+<span class:list={["inline-flex items-center gap-2.5 text-inherit", className]}>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="h-9 w-9 shrink-0" aria-hidden="true">
+    <rect x="0.75" y="0.75" width="30.5" height="30.5" rx="4" fill={tile} stroke={line} stroke-width="1.5"></rect>
+    <path d="M6 15.2 16 7l10 8.2" fill="none" stroke={line} stroke-width="1.8" stroke-linejoin="round"></path>
+    <path d="M9 15.2V25h14V15.2" fill="none" stroke={line} stroke-width="1.8"></path>
+    <path d="M14.2 25v-5.5h3.6V25" fill="#ea580c"></path>
+  </svg>
+  <span class="font-serif text-[1.35rem] leading-none tracking-tight">Sivutek</span>
+</span>

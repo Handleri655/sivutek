@@ -1,0 +1,22 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { company } from "../data/company";
+---
+
+<BaseLayout
+  title="Kiitos viestistä"
+  description="Tarjouspyyntö on vastaanotettu. Sivutek ottaa yhteyttä puhelimitse tai sähköpostilla."
+  noindex={true}
+>
+  <section class="section wrap">
+    <p class="eyebrow">Tarjouspyyntö</p>
+    <h1 class="mt-3 text-4xl md:text-5xl">Kiitos viestistä</h1>
+    <p class="lede mt-4">
+      Tarjouspyyntö on lähtenyt. Otamme yhteyttä puhelimitse tai sähköpostilla. Jos asia on kiireellinen, soita.
+    </p>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <a class="btn btn-primary" href={`tel:${company.phoneTel}`}>Soita {company.phoneDisplay}</a>
+      <a class="btn btn-secondary" href="/">Takaisin etusivulle</a>
+    </div>
+  </section>
+</BaseLayout>

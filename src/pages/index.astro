@@ -1,0 +1,181 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import Hero from "../components/Hero.astro";
+import ServiceCard from "../components/ServiceCard.astro";
+import Deduction from "../components/Deduction.astro";
+import Gallery from "../components/Gallery.astro";
+import CTA from "../components/CTA.astro";
+import { company } from "../data/company";
+import { getPalvelut, getReferenssit } from "../lib/content";
+import type { GalleryItem } from "../components/Gallery.astro";
+
+const palvelut = await getPalvelut();
+const referenssit = await getReferenssit();
+const galleryItems: GalleryItem[] = referenssit.map((entry) => ({
+  title: entry.data.title,
+  summary: entry.data.summary,
+  location: entry.data.location,
+  image: entry.data.image,
+  imageAlt: entry.data.imageAlt,
+}));
+
+const reasons = [
+  {
+    title: "Maksuton kartoituskäynti",
+    text: "Kohde käydään läpi paikan päällä ennen tarjousta. Käynti on maksuton Pirkanmaalla ja sen ympäristössä.",
+  },
+  {
+    title: "Tarjous ennen päätöstä",
+    text: "Saat tarjouksen ja päätät itse, etenetkö. Työn sisältö sovitaan ennen aloitusta.",
+  },
+  {
+    title: "Aikataulu kohteen mukaan",
+    text: "Kerro, milloin työ olisi ajankohtainen. Vapaa aika katsotaan työtilanteen mukaan.",
+  },
+  {
+    title: "Paikallinen tekijä",
+    text: "Sivutek toimii Nokialta. Yhteydenotto tulee suoraan yritykseen.",
+  },
+];
+
+const steps = [
+  {
+    title: "Yhteydenotto",
+    text: "Soita, lähetä tarjouspyyntö tai varaa aika.",
+  },
+  {
+    title: "Kartoituskäynti",
+    text: "Käymme kohteessa ja kirjaamme, mitä tehdään.",
+  },
+  {
+    title: "Tarjous",
+    text: "Saat tarjouksen, jonka perusteella voit päättää.",
+  },
+  {
+    title: "Toteutus",
+    text: "Työ tehdään sovittuna aikana. Valmistumisesta sovitaan tarjouksen yhteydessä.",
+  },
+];
+---
+
+<BaseLayout
+  title="Sivutek | Rakennus-, remontti- ja LVI-työt Nokialla"
+  description="Rakennus-, remontointi- ja LVI-työt Pirkanmaalla Nokialta käsin. Pyydä tarjous tai varaa ilmainen kartoituskäynti. Sivutek, Nokia."
+  overlayHeader
+>
+  <Hero />
+
+  <section class="border-y border-line bg-card" aria-label="Lyhyesti">
+    <ul class="wrap grid list-none gap-6 p-0 py-6 sm:grid-cols-3 sm:gap-0 sm:py-0">
+      <li class="sm:px-6 sm:py-6 sm:pl-0">
+        <p class="font-serif text-2xl">Maksuton kartoitus</p>
+        <p class="mt-1 text-ink-soft">Ennen tarjousta, kohteessa.</p>
+      </li>
+      <li class="border-line sm:border-l sm:px-6 sm:py-6">
+        <p class="font-serif text-2xl">Tarjous ensin</p>
+        <p class="mt-1 text-ink-soft">Saat tarjouksen ennen päätöstä.</p>
+      </li>
+      <li class="border-line sm:border-l sm:px-6 sm:py-6">
+        <p class="font-serif text-2xl">Suora yhteys</p>
+        <p class="mt-1 text-ink-soft">Soitat tai viestit suoraan yritykseen.</p>
+      </li>
+    </ul>
+  </section>
+
+  <section class="section wrap" id="palvelut" aria-labelledby="palvelut-otsikko">
+    <p class="eyebrow">Palvelut</p>
+    <h2 id="palvelut-otsikko" class="mt-3 text-3xl md:text-4xl">Mitä teemme</h2>
+    <p class="lede mt-4">
+      Remontit, rakennustyöt ja LVI-työt. Jokaisen kohteen sisältö sovitaan tarjouksessa. Jos et ole varma, mihin työ
+      kuuluu, soita.
+    </p>
+    <div class="mt-8 grid gap-4 md:grid-cols-3">
+      {
+        palvelut.map((entry, index) => (
+          <ServiceCard
+            href={`/palvelut/${entry.id}`}
+            index={index + 1}
+            title={entry.data.title}
+            summary={entry.data.summary}
+            slug={entry.id}
+          />
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="section border-y border-line bg-card" aria-labelledby="miksi-otsikko">
+    <div class="wrap">
+      <p class="eyebrow">Miksi Sivutek</p>
+      <h2 id="miksi-otsikko" class="mt-3 text-3xl md:text-4xl">Selkeä työ, suora yhteys</h2>
+      <ul class="mt-8 grid list-none gap-4 p-0 md:grid-cols-2">
+        {
+          reasons.map((reason) => (
+            <li class="border-l-4 border-accent-fill bg-paper p-5">
+              <h3 class="text-2xl">{reason.title}</h3>
+              <p class="mt-2 text-ink-soft">{reason.text}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="section wrap" id="miten" aria-labelledby="miten-otsikko">
+    <p class="eyebrow">Työn kulku</p>
+    <h2 id="miten-otsikko" class="mt-3 text-3xl md:text-4xl">Näin työ etenee</h2>
+    <ol class="mt-8 grid list-none gap-6 p-0 md:grid-cols-4">
+      {
+        steps.map((step, index) => (
+          <li>
+            <span class="font-serif text-3xl text-accent">{String(index + 1).padStart(2, "0")}</span>
+            <h3 class="mt-3 text-xl">{step.title}</h3>
+            <p class="mt-2 text-ink-soft">{step.text}</p>
+          </li>
+        ))
+      }
+    </ol>
+  </section>
+
+  <section class="section wrap pt-0">
+    <Deduction />
+  </section>
+
+  <section class="on-dark bg-ink py-14 text-paper" aria-labelledby="alue-otsikko">
+    <div class="wrap">
+      <p class="font-sans text-xs font-semibold tracking-[0.16em] text-sand uppercase">Toiminta-alue</p>
+      <h2 id="alue-otsikko" class="mt-3 text-3xl text-white md:text-4xl">Pirkanmaa ja ympäristö</h2>
+      <p class="mt-4 max-w-2xl text-mist">
+        Työt lähtevät Nokialta. Alla olevat kunnat ovat pääasiallinen alue. Jos kohde on hieman ulkopuolella, kysy silti.
+      </p>
+      <ul class="mt-8 grid list-none gap-3 p-0 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          company.area.map((place) => (
+            <li class="border-t border-white/20 py-3 font-serif text-2xl text-white">{place}</li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    galleryItems.length > 0 && (
+      <section class="section wrap" aria-labelledby="kohteet-otsikko">
+        <p class="eyebrow">Kohteet</p>
+        <h2 id="kohteet-otsikko" class="mt-3 text-3xl md:text-4xl">
+          Tehdyt työt
+        </h2>
+        <div class="mt-6">
+          <Gallery items={galleryItems} />
+        </div>
+        <p class="mt-6">
+          <a class="link" href="/referenssit">
+            Siirry referensseihin
+          </a>
+        </p>
+      </section>
+    )
+  }
+
+  <CTA />
+</BaseLayout>

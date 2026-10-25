@@ -1,0 +1,49 @@
+---
+import { Image } from "astro:assets";
+import type { ImageMetadata } from "astro";
+
+export interface GalleryItem {
+  title: string;
+  summary: string;
+  location?: string;
+  image?: ImageMetadata;
+  imageAlt?: string;
+}
+
+interface Props {
+  items: GalleryItem[];
+}
+
+const { items } = Astro.props;
+---
+
+{
+  items.length > 0 && (
+    <ul class="grid list-none gap-4 p-0 md:grid-cols-3">
+      {items.map((item) => (
+        <li class="border border-line bg-card">
+          {item.image ? (
+            <div class="aspect-[4/3] overflow-hidden bg-paper-deep">
+              <Image
+                src={item.image}
+                alt={item.imageAlt || `${item.title}${item.location ? `, ${item.location}` : ""}`}
+                widths={[400, 800]}
+                sizes="(min-width: 768px) 33vw, 100vw"
+                class="h-full w-full object-cover"
+              />
+            </div>
+          ) : (
+            <div class="flex aspect-[4/3] items-center justify-center bg-paper-deep p-6 text-center">
+              <p class="font-serif text-xl">Kuva tulossa</p>
+            </div>
+          )}
+          <div class="p-5">
+            <h3 class="text-xl">{item.title}</h3>
+            {item.location && <p class="mt-1 text-sm text-ink-soft">{item.location}</p>}
+            <p class="mt-2 text-ink-soft">{item.summary}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+  )
+}

@@ -1,0 +1,24 @@
+---
+interface Props {
+  title?: string;
+  text?: string;
+}
+
+const {
+  title = "Pyydä tarjous tai varaa käynti",
+  text = "Kartoituskäynti on maksuton Pirkanmaalla ja sen ympäristössä. Kerro kohde, niin katsotaan aikataulu.",
+} = Astro.props;
+---
+
+<section class="on-dark bg-ink text-paper">
+  <div class="wrap flex flex-col gap-6 py-14 md:flex-row md:items-end md:justify-between">
+    <div>
+      <h2 class="text-3xl text-white md:text-4xl">{title}</h2>
+      <p class="mt-3 max-w-xl text-mist">{text}</p>
+    </div>
+    <div class="flex flex-col gap-3 sm:flex-row">
+      <a class="btn btn-primary" href="/yhteystiedot">Pyydä tarjous</a>
+      <a class="btn btn-ghost-on-dark" href="/varaa">Varaa kartoitus</a>
+    </div>
+  </div>
+</section>

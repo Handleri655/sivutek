@@ -1,0 +1,18 @@
+---
+import { company } from "../data/company";
+---
+
+<aside class="border border-line bg-card p-6" aria-labelledby="kotitalous-otsikko">
+  <h2 id="kotitalous-otsikko" class="text-2xl">Kotitalousvähennys</h2>
+  <p class="mt-3 max-w-3xl text-ink-soft">
+    Kun teetät työtä kotiisi tai vapaa-ajan asunnolle, voit mahdollisesti vähentää työn osuuden verotuksessa.
+    Vähennys ei koske materiaaleja. Ehdot ja enimmäismäärät vaihtelevat, joten tarkista ajantasainen ohje
+    Verohallinnolta.
+  </p>
+  <p class="mt-4">
+    <a class="link" href={company.householdDeductionUrl} target="_blank" rel="noopener noreferrer">
+      Kotitalousvähennys vero.fi
+      <span class="sr-only">(avautuu uuteen välilehteen)</span>
+    </a>
+  </p>
+</aside>

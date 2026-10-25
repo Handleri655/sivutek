@@ -1,0 +1,15 @@
+---
+import { company } from "../data/company";
+---
+
+<nav
+  class="no-print fixed inset-x-0 bottom-0 z-40 border-t border-line bg-card p-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] lg:hidden"
+  aria-label="Pikatoiminnot"
+>
+  <div class="grid grid-cols-2 gap-2">
+    <a class="btn btn-secondary" href={`tel:${company.phoneTel}`} aria-label={`Soita ${company.phoneDisplay}`}>
+      Soita
+    </a>
+    <a class="btn btn-primary" href="/yhteystiedot">Pyydä tarjous</a>
+  </div>
+</nav>

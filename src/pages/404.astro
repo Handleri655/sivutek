@@ -1,0 +1,21 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { company } from "../data/company";
+---
+
+<BaseLayout
+  title="Sivua ei löytynyt"
+  description="Hakemaasi sivua ei ole. Siirry Sivutekin etusivulle tai ota yhteyttä."
+  noindex={true}
+>
+  <section class="section wrap">
+    <p class="eyebrow">404</p>
+    <h1 class="mt-3 text-4xl md:text-5xl">Sivua ei löytynyt</h1>
+    <p class="lede mt-4">Linkki on vanhentunut tai osoite meni väärin.</p>
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <a class="btn btn-primary" href="/">Etusivulle</a>
+      <a class="btn btn-secondary" href="/yhteystiedot">Yhteystiedot</a>
+      <a class="btn btn-secondary" href={`tel:${company.phoneTel}`}>Soita</a>
+    </div>
+  </section>
+</BaseLayout>

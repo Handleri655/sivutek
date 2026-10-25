@@ -1,0 +1,71 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import ContactForm from "../components/ContactForm.astro";
+import { company } from "../data/company";
+
+const selected = Astro.url.searchParams.get("palvelu") ?? "";
+---
+
+<BaseLayout
+  title="Yhteystiedot"
+  description="Pyydä tarjous tai soita numeroon +358 50 918 2739. Sivutek, Nokia. Sähköposti eelis.sivula@sivutek.com."
+>
+  <section class="section wrap">
+    <p class="eyebrow">Yhteys</p>
+    <h1 class="mt-3 text-4xl md:text-5xl">Pyydä tarjous</h1>
+    <p class="lede mt-4">
+      Kerro kohde lomakkeella, soita tai laita viesti. Tekstiviesti ja WhatsApp tulevat samaan numeroon. Jos et saa heti
+      kiinni, jätä tarjouspyyntö, niin palaamme asiaan.
+    </p>
+
+    <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <aside class="h-fit border border-line bg-card p-6 lg:col-start-2 lg:row-start-1">
+        <h2 class="text-2xl">{company.name}</h2>
+        <p class="mt-1 text-ink-soft">{company.city}, {company.region}</p>
+        <dl class="mt-6 grid gap-4">
+          <div>
+            <dt class="text-sm font-semibold">Puhelin</dt>
+            <dd>
+              <a class="link" href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold">Tekstiviesti</dt>
+            <dd>
+              <a class="link" href={company.smsHref}>Lähetä viesti numeroon {company.phoneDisplay}</a>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold">WhatsApp</dt>
+            <dd>
+              <a class="link" href={company.whatsappHref} target="_blank" rel="noopener noreferrer">
+                Avaa WhatsApp<span class="sr-only"> (avautuu uuteen välilehteen)</span>
+              </a>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold">Sähköposti</dt>
+            <dd>
+              <a class="link break-all" href={`mailto:${company.email}`}>{company.email}</a>
+            </dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold">Yhteyshenkilö</dt>
+            <dd>{company.contactName}</dd>
+          </div>
+          <div>
+            <dt class="text-sm font-semibold">Y-tunnus</dt>
+            <dd>{company.ytunnus}</dd>
+          </div>
+        </dl>
+      </aside>
+
+      <div class="lg:col-start-1 lg:row-start-1">
+        <h2 class="text-2xl">Tarjouspyyntö</h2>
+        <div class="mt-5">
+          <ContactForm selected={selected} />
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>

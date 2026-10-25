@@ -1,0 +1,58 @@
+---
+interface Props {
+  href: string;
+  index: number;
+  title: string;
+  summary: string;
+  slug: string;
+  points?: string[];
+}
+
+const { href, index, title, summary, slug, points = [] } = Astro.props;
+const label = String(index).padStart(2, "0");
+---
+
+<a href={href} class="group flex h-full flex-col border border-line bg-card p-6 hover:border-accent">
+  <span class="flex items-center justify-between gap-4">
+    <span class="font-serif text-3xl text-accent">{label}</span>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" class="h-8 w-8 text-ink" aria-hidden="true">
+      {
+        slug === "remontit" && (
+          <g fill="none" stroke="currentColor" stroke-width="1.6">
+            <rect x="5" y="8" width="16" height="16" />
+            <path d="M21 18h6M24 15v6" />
+          </g>
+        )
+      }
+      {
+        slug === "rakennustyot" && (
+          <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round">
+            <path d="M5 15 16 6l11 9" />
+            <path d="M8 15v11h16V15" />
+          </g>
+        )
+      }
+      {
+        slug === "lvi-tyot" && (
+          <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round">
+            <path d="M8 8h10v6H14v10" />
+            <path d="M14 24h8" />
+            <circle cx="23" cy="11" r="3" />
+          </g>
+        )
+      }
+    </svg>
+  </span>
+  <h3 class="mt-5 text-2xl group-hover:underline">{title}</h3>
+  <p class="mt-3 text-ink-soft">{summary}</p>
+  {
+    points.length > 0 && (
+      <ul class="mt-4 grid list-disc gap-1 pl-5 text-ink-soft">
+        {points.map((point) => (
+          <li>{point}</li>
+        ))}
+      </ul>
+    )
+  }
+  <span class="mt-6 font-semibold text-accent">Lue lisää</span>
+</a>

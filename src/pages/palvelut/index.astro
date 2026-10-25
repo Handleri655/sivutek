@@ -1,0 +1,37 @@
+---
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import ServiceCard from "../../components/ServiceCard.astro";
+import CTA from "../../components/CTA.astro";
+import { getPalvelut } from "../../lib/content";
+
+const palvelut = await getPalvelut();
+---
+
+<BaseLayout
+  title="Palvelut"
+  description="Remontit, rakennustyöt ja LVI-työt Nokialla ja Pirkanmaalla. Katso palvelut ja pyydä tarjous Sivutekilta."
+>
+  <section class="section wrap">
+    <p class="eyebrow">Sivutek</p>
+    <h1 class="mt-3 text-4xl md:text-5xl">Palvelut</h1>
+    <p class="lede mt-4">
+      Rakennus-, remontointi- ja LVI-työt Pirkanmaalla. Jokaisen kohteen sisältö, aikataulu ja hinta sovitaan
+      tarjouksessa kartoituskäynnin jälkeen.
+    </p>
+    <div class="mt-10 grid gap-4 lg:grid-cols-3">
+      {
+        palvelut.map((entry, index) => (
+          <ServiceCard
+            href={`/palvelut/${entry.id}`}
+            index={index + 1}
+            title={entry.data.title}
+            summary={entry.data.summary}
+            slug={entry.id}
+            points={entry.data.includes}
+          />
+        ))
+      }
+    </div>
+  </section>
+  <CTA />
+</BaseLayout>

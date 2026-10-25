@@ -1,0 +1,76 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import JsonLd from "../components/JsonLd.astro";
+import { company } from "../data/company";
+import { faqPage } from "../lib/jsonld";
+
+const hasBooking = company.bookingUrl.trim().length > 0;
+const faqs = [
+  {
+    q: "Mitä kartoituskäynti maksaa?",
+    a: "Ei mitään. Käynti on maksuton Pirkanmaalla ja sen ympäristössä.",
+  },
+  {
+    q: "Sitoudunko jo käynnillä?",
+    a: "Et. Käynnin jälkeen saat tarjouksen ja päätät itse, tilaatko työn.",
+  },
+  {
+    q: "Miten ajan saa?",
+    a: hasBooking
+      ? "Varaa aika tällä sivulla olevasta kalenterista, soita tai lähetä tarjouspyyntö."
+      : "Soita tai lähetä tarjouspyyntö.",
+  },
+];
+---
+
+<BaseLayout
+  title="Varaa ilmainen kartoituskäynti"
+  description="Varaa maksuton kartoituskäynti remontti-, rakennus- tai LVI-työtä varten. Sivutek palvelee Nokialla ja Pirkanmaalla."
+>
+  <JsonLd slot="head" data={faqPage(faqs)} />
+
+  <section class="section wrap">
+    <p class="eyebrow">Ajanvaraus</p>
+    <h1 class="mt-3 max-w-3xl text-4xl md:text-5xl">Varaa ilmainen kartoituskäynti</h1>
+    <p class="lede mt-4">
+      Käynnillä katsotaan kohde ja sovitaan, mitä tarjoukseen kuuluu. Käynti on maksuton Pirkanmaalla ja sen
+      ympäristössä. Mitään ei tarvitse päättää käynnin aikana.
+    </p>
+
+    <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+      <a class="btn btn-primary" href={`tel:${company.phoneTel}`}>Soita {company.phoneDisplay}</a>
+      <a class="btn btn-secondary" href="/yhteystiedot">Lähetä tarjouspyyntö</a>
+    </div>
+
+    {
+      hasBooking ? (
+        <div class="mt-10">
+          <iframe
+            src={company.bookingUrl}
+            title="Varaa ilmainen kartoituskäynti"
+            class="h-[720px] w-full border border-line bg-white"
+            loading="lazy"
+          />
+          <p class="mt-3 text-sm">
+            <a class="link" href={company.bookingUrl} target="_blank" rel="noopener noreferrer">
+              Avaa varauskalenteri uuteen välilehteen
+              <span class="sr-only">(avautuu uuteen välilehteen)</span>
+            </a>
+          </p>
+        </div>
+      ) : null
+    }
+
+    <h2 class="mt-12 text-3xl">Usein kysyttyä</h2>
+    <dl class="mt-4 grid max-w-3xl gap-4">
+      {
+        faqs.map((faq) => (
+          <div class="border-t border-line pt-4">
+            <dt class="font-semibold">{faq.q}</dt>
+            <dd class="mt-2 text-ink-soft">{faq.a}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+</BaseLayout>

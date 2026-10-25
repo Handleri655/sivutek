@@ -1,0 +1,108 @@
+---
+import { company, visibleNavigation } from "../data/company";
+import { getPalvelut, getReferenssit } from "../lib/content";
+import Logo from "./Logo.astro";
+
+const palvelut = await getPalvelut();
+const navigation = visibleNavigation((await getReferenssit()).length > 0);
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer on-dark bg-ink text-paper">
+  <div class="wrap grid gap-10 py-14 md:grid-cols-2 lg:grid-cols-4">
+    <div>
+      <Logo />
+      <p class="mt-4 max-w-xs text-mist">{company.description}</p>
+    </div>
+
+    <div>
+      <h2 class="font-sans text-sm font-semibold tracking-[0.14em] text-sand uppercase">Palvelut</h2>
+      <ul class="mt-4 grid list-none gap-2 p-0">
+        {
+          palvelut.map((entry) => (
+            <li>
+              <a class="text-mist hover:text-white" href={`/palvelut/${entry.id}`}>
+                {entry.data.title}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="font-sans text-sm font-semibold tracking-[0.14em] text-sand uppercase">Sivut</h2>
+      <ul class="mt-4 grid list-none gap-2 p-0">
+        {
+          navigation.map((item) => (
+            <li>
+              <a class="text-mist hover:text-white" href={item.href}>
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+        <li>
+          <a class="text-mist hover:text-white" href="/tietosuoja">Tietosuojaseloste</a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <h2 class="font-sans text-sm font-semibold tracking-[0.14em] text-sand uppercase">Yhteys</h2>
+      <dl class="mt-4 grid gap-3">
+        <div>
+          <dt class="text-sm text-sand">Puhelin</dt>
+          <dd>
+            <a class="text-white underline decoration-white/40 underline-offset-4" href={`tel:${company.phoneTel}`}>
+              {company.phoneDisplay}
+            </a>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-sand">Viesti</dt>
+          <dd class="flex flex-col gap-1">
+            <a class="text-white underline decoration-white/40 underline-offset-4" href={company.smsHref}>
+              Tekstiviesti
+            </a>
+            <a
+              class="text-white underline decoration-white/40 underline-offset-4"
+              href={company.whatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              WhatsApp
+            </a>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-sand">Sähköposti</dt>
+          <dd>
+            <a
+              class="break-all text-white underline decoration-white/40 underline-offset-4"
+              href={`mailto:${company.email}`}
+            >
+              {company.email}
+            </a>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm text-sand">Paikkakunta</dt>
+          <dd>{company.city}, {company.region}</dd>
+        </div>
+        <div>
+          <dt class="text-sm text-sand">Y-tunnus</dt>
+          <dd>{company.ytunnus}</dd>
+        </div>
+      </dl>
+    </div>
+  </div>
+  <div class="border-t border-white/15">
+    <div class="wrap flex flex-col gap-2 py-5 text-sm text-mist sm:flex-row sm:justify-between">
+      <p>© {year} {company.name}</p>
+      <a class="underline decoration-white/30 underline-offset-4 hover:text-white" href="/tietosuoja">
+        Tietosuojaseloste
+      </a>
+    </div>
+  </div>
+</footer>

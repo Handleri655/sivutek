@@ -1,0 +1,229 @@
+---
+import { company } from "../data/company";
+import { getPalvelut } from "../lib/content";
+
+interface Props {
+  selected?: string;
+}
+
+const { selected = "" } = Astro.props;
+const palvelut = await getPalvelut();
+const selectedSlug = palvelut.some((item) => item.id === selected) ? selected : "";
+---
+
+<form class="grid gap-4" method="POST" accept-charset="UTF-8" data-contact-form>
+  <input type="hidden" name="_subject" value="Uusi tarjouspyyntö sivustolta sivutek.com" />
+  <input type="hidden" name="_template" value="table" />
+  <input type="hidden" name="_captcha" value="false" />
+  <input type="hidden" name="_next" value={`${company.url}/kiitos`} />
+
+  <div class="absolute -left-[9999px] h-px overflow-hidden" aria-hidden="true">
+    <label>
+      Älä täytä tätä kenttää
+      <input type="text" name="_honey" tabindex="-1" autocomplete="off" />
+    </label>
+  </div>
+
+  <p class="text-sm text-ink-soft">Tähdellä merkityt kentät ovat pakollisia.</p>
+
+  <div class="field">
+    <label for="nimi">
+      Nimi <span aria-hidden="true">*</span><span class="sr-only"> (pakollinen)</span>
+    </label>
+    <input id="nimi" name="nimi" type="text" autocomplete="name" required />
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="field">
+      <label for="puhelin">
+        Puhelin <span aria-hidden="true">*</span><span class="sr-only"> (pakollinen)</span>
+      </label>
+      <input id="puhelin" name="puhelin" type="tel" inputmode="tel" autocomplete="tel" required />
+    </div>
+    <div class="field">
+      <label for="email">
+        Sähköposti <span aria-hidden="true">*</span><span class="sr-only"> (pakollinen)</span>
+      </label>
+      <input id="email" name="email" type="email" autocomplete="email" required />
+    </div>
+  </div>
+
+  <div class="grid gap-4 sm:grid-cols-2">
+    <div class="field">
+      <label for="paikkakunta">
+        Paikkakunta <span aria-hidden="true">*</span><span class="sr-only"> (pakollinen)</span>
+      </label>
+      <input id="paikkakunta" name="paikkakunta" type="text" autocomplete="address-level2" required />
+    </div>
+    <div class="field">
+      <label for="palvelu">
+        Palvelu <span aria-hidden="true">*</span><span class="sr-only"> (pakollinen)</span>
+      </label>
+      <select id="palvelu" name="palvelu" required>
+        <option value="" selected={selectedSlug === ""}>Valitse palvelu</option>
+        {
+          palvelut.map((entry) => (
+            <option value={entry.id} selected={entry.id === selectedSlug}>
+              {entry.data.title}
+            </option>
+          ))
+        }
+        <option value="muu">Muu tai en ole varma</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="field">
+    <label for="aikataulu">Toivottu aikataulu</label>
+    <input id="aikataulu" name="aikataulu" type="text" autocomplete="off" />
+  </div>
+
+  <div class="field">
+    <label for="viesti">
+      Kuvaus työstä <span aria-hidden="true">*</span><span class="sr-only"> (pakollinen)</span>
+    </label>
+    <textarea id="viesti" name="viesti" required></textarea>
+  </div>
+
+  <p class="text-sm text-ink-soft">
+    Kuvat voit lähettää sähköpostilla tai näyttää kartoituskäynnillä. Lähettämällä lomakkeen tietojasi käytetään
+    tarjouspyynnön käsittelyyn.
+    <a class="link" href="/tietosuoja">Lue tietosuojaseloste</a>.
+  </p>
+
+  <div data-form-error hidden tabindex="-1" role="alert" class="border border-accent bg-card p-4">
+    <p>
+      Viestiä ei saatu lähetettyä palvelun kautta. Soita numeroon
+      <a class="link" href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a>
+      tai lähetä samat tiedot sähköpostilla.
+    </p>
+    <p class="mt-3">
+      <a class="btn btn-secondary" data-mailto-fallback href={`mailto:${company.email}`}>
+        Lähetä tiedot sähköpostilla
+      </a>
+    </p>
+  </div>
+
+  <button class="btn btn-primary" type="submit" data-submit data-label="Lähetä tarjouspyyntö">
+    Lähetä tarjouspyyntö
+  </button>
+</form>
+
+<noscript>
+  <p class="mt-4 text-ink-soft">
+    Lomake tarvitsee JavaScriptin. Soita numeroon {company.phoneDisplay} tai lähetä sähköposti osoitteeseen {company.email}.
+  </p>
+</noscript>
+
+<script>
+  import { company } from "../data/company";
+
+  const messages: Record<string, string> = {
+    nimi: "Kirjoita nimesi.",
+    puhelin: "Kirjoita puhelinnumerosi.",
+    email: "Kirjoita toimiva sähköpostiosoite.",
+    paikkakunta: "Kirjoita paikkakunta.",
+    palvelu: "Valitse palvelu.",
+    viesti: "Kerro lyhyesti, mitä työtä tarvitset.",
+  };
+
+  function mailtoHref(data: FormData) {
+    const body = [
+      `Nimi: ${data.get("nimi") ?? ""}`,
+      `Puhelin: ${data.get("puhelin") ?? ""}`,
+      `Sähköposti: ${data.get("email") ?? ""}`,
+      `Paikkakunta: ${data.get("paikkakunta") ?? ""}`,
+      `Palvelu: ${data.get("palvelu") ?? ""}`,
+      `Toivottu aikataulu: ${data.get("aikataulu") || "-"}`,
+      "",
+      String(data.get("viesti") ?? ""),
+    ].join("\n");
+    return `mailto:${company.email}?subject=${encodeURIComponent("Tarjouspyyntö sivutek.com")}&body=${encodeURIComponent(body)}`;
+  }
+
+  function fieldsOf(form: HTMLFormElement) {
+    return Array.from(form.elements).filter(
+      (field): field is HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement =>
+        field instanceof HTMLInputElement ||
+        field instanceof HTMLTextAreaElement ||
+        field instanceof HTMLSelectElement,
+    );
+  }
+
+  function messageFor(field: HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement) {
+    if (field.validity.valid || field.type === "hidden" || field.name === "_honey") return "";
+    return messages[field.name] ?? "Tarkista tämä kenttä.";
+  }
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("form[data-contact-form]")) {
+    if (form.dataset.bound === "true") continue;
+    form.dataset.bound = "true";
+
+    const service = form.querySelector<HTMLSelectElement>("#palvelu");
+    const requested = new URLSearchParams(window.location.search).get("palvelu");
+    if (service && requested && [...service.options].some((option) => option.value === requested)) {
+      service.value = requested;
+    }
+
+    for (const field of fieldsOf(form)) {
+      field.addEventListener("invalid", () => {
+        field.setCustomValidity(messageFor(field));
+      });
+      field.addEventListener("input", () => field.setCustomValidity(""));
+      field.addEventListener("change", () => field.setCustomValidity(""));
+    }
+
+    form.querySelector("[data-submit]")?.addEventListener("click", () => {
+      for (const field of fieldsOf(form)) {
+        field.setCustomValidity("");
+        const message = messageFor(field);
+        if (message) field.setCustomValidity(message);
+      }
+    });
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const button = form.querySelector<HTMLButtonElement>("[data-submit]");
+      const errorBox = form.querySelector<HTMLElement>("[data-form-error]");
+      const mailto = form.querySelector<HTMLAnchorElement>("[data-mailto-fallback]");
+      const data = new FormData(form);
+
+      if (String(data.get("_honey") ?? "").trim() !== "") {
+        window.location.href = "/kiitos";
+        return;
+      }
+
+      if (button) {
+        button.disabled = true;
+        button.textContent = "Lähetetään…";
+      }
+      errorBox?.setAttribute("hidden", "");
+
+      try {
+        const payload = Object.fromEntries(data.entries());
+        const response = await fetch(company.formEndpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Accept: "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+        const result = (await response.json().catch(() => null)) as { success?: boolean | string } | null;
+        const success = result?.success === true || result?.success === "true";
+        if (!response.ok || !success) throw new Error("send failed");
+        window.location.href = "/kiitos";
+      } catch {
+        if (button) {
+          button.disabled = false;
+          button.textContent = button.dataset.label || "Lähetä tarjouspyyntö";
+        }
+        if (mailto) mailto.href = mailtoHref(data);
+        if (errorBox) {
+          errorBox.hidden = false;
+          errorBox.focus();
+        }
+      }
+    });
+  }
+</script>

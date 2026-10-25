@@ -1,0 +1,76 @@
+---
+import BaseLayout from "../layouts/BaseLayout.astro";
+import { company } from "../data/company";
+---
+
+<BaseLayout
+  title="Tietosuojaseloste"
+  description="Sivutekin tietosuojaseloste: miten yhteydenottolomakkeen tietoja käsitellään."
+>
+  <article class="section wrap rich-text">
+    <p class="eyebrow">Tietosuoja</p>
+    <h1 class="mt-3 text-4xl md:text-5xl">Tietosuojaseloste</h1>
+    <p class="mt-4 text-ink-soft">Päivitetty {company.privacyUpdated}.</p>
+
+    <h2>Rekisterinpitäjä</h2>
+    <p>
+      {company.name}, Y-tunnus {company.ytunnus}. Yhteyshenkilö {company.contactName}.<br />
+      {company.city}, {company.region}<br />
+      <a class="link" href={`mailto:${company.email}`}>{company.email}</a><br />
+      <a class="link" href={`tel:${company.phoneTel}`}>{company.phoneDisplay}</a>
+    </p>
+
+    <h2>Mitä tietoja kerätään</h2>
+    <p>Tarjouspyyntölomakkeella:</p>
+    <ul>
+      <li>nimi</li>
+      <li>puhelinnumero</li>
+      <li>sähköpostiosoite</li>
+      <li>paikkakunta</li>
+      <li>palvelun tyyppi</li>
+      <li>toivottu aikataulu, jos kerrot sen</li>
+      <li>kuvaus työstä</li>
+    </ul>
+    <p>
+      Sivusto ei käytä evästeitä eikä kävijäseurantaa. Julkaisualusta voi tallentaa teknisiä lokitietoja, kuten
+      IP-osoitteen, tietoturvaa ja ylläpitoa varten.
+    </p>
+
+    <h2>Mihin tietoja käytetään</h2>
+    <p>
+      Tietoja käytetään tarjouspyyntöön ja kartoituskäyntiin vastaamiseen. Jos työ tilataan, tietoja käytetään myös
+      sovitun työn hoitamiseen ja lakisääteiseen kirjanpitoon.
+    </p>
+
+    <h2>Käsittelyn peruste</h2>
+    <p>
+      Ennen sopimusta tietoja käsitellään tarjouksen antamiseksi (tietosuoja-asetuksen 6 artiklan 1 kohdan b alakohta).
+      Yhteydenottoon vastaaminen voi perustua myös oikeutettuun etuun (6 artiklan 1 kohdan f alakohta). Lomakkeessa ei
+      pyydetä erillistä suostumusta markkinointiin, eikä osoitteita käytetä uutiskirjeisiin.
+    </p>
+
+    <h2>Vastaanottajat</h2>
+    <p>
+      Lomake lähetetään palvelun {company.formProviderName} kautta ({company.formProviderUrl}), joka välittää viestin
+      sähköpostilla rekisterinpitäjälle. Viesti voi siten kulkea EU:n ulkopuolella. Jos et halua käyttää lomaketta,
+      soita tai lähetä sähköposti suoraan.
+    </p>
+    <p>Viesti päätyy rekisterinpitäjän sähköpostiin. Julkaisualusta käsittelee sivuston teknisiä lokeja.</p>
+
+    <h2>Säilytysaika</h2>
+    <p>
+      Tarjouspyynnöt säilytetään enintään 24 kuukautta viimeisestä yhteydenotosta, jos työtä ei tilata. Jos työ
+      tilataan, kirjanpitoaineisto säilytetään kirjanpitolain edellyttämän ajan.
+    </p>
+
+    <h2>Sinun oikeutesi</h2>
+    <p>Voit pyytää pääsyä omiin tietoihisi, niiden oikaisua tai poistoa, sekä käsittelyn rajoittamista tai vastustamista. Pyyntö lähetetään osoitteeseen {company.email}.</p>
+    <p>
+      Voit tehdä valituksen Tietosuojavaltuutetulle:
+      <a class="link" href="https://tietosuoja.fi" target="_blank" rel="noopener noreferrer">
+        tietosuoja.fi<span class="sr-only"> (avautuu uuteen välilehteen)</span>
+      </a>.
+    </p>
+    <p>Tietoja ei käytetä automaattiseen päätöksentekoon.</p>
+  </article>
+</BaseLayout>

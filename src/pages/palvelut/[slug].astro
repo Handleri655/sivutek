@@ -1,0 +1,101 @@
+---
+import { getCollection, render } from "astro:content";
+import type { CollectionEntry } from "astro:content";
+import BaseLayout from "../../layouts/BaseLayout.astro";
+import JsonLd from "../../components/JsonLd.astro";
+import Deduction from "../../components/Deduction.astro";
+import CTA from "../../components/CTA.astro";
+import { company } from "../../data/company";
+import { breadcrumb, faqPage, serviceSchema } from "../../lib/jsonld";
+
+export async function getStaticPaths() {
+  const palvelut = await getCollection("palvelut");
+  return palvelut.map((entry) => ({
+    params: { slug: entry.id },
+    props: { entry },
+  }));
+}
+
+interface Props {
+  entry: CollectionEntry<"palvelut">;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const url = new URL(`/palvelut/${entry.id}`, company.url).toString();
+---
+
+<BaseLayout title={entry.data.title} description={entry.data.description}>
+  <JsonLd
+    slot="head"
+    data={breadcrumb([
+      { name: "Etusivu", url: company.url },
+      { name: "Palvelut", url: `${company.url}/palvelut` },
+      { name: entry.data.title, url },
+    ])}
+  />
+  <JsonLd slot="head" data={faqPage(entry.data.faqs)} />
+  <JsonLd
+    slot="head"
+    data={serviceSchema({
+      name: entry.data.title,
+      description: entry.data.summary,
+      url,
+    })}
+  />
+
+  <article class="section wrap">
+    <nav aria-label="Murupolku">
+      <ol class="crumbs">
+        <li><a href="/">Etusivu</a></li>
+        <li><a href="/palvelut">Palvelut</a></li>
+        <li aria-current="page">{entry.data.title}</li>
+      </ol>
+    </nav>
+
+    <p class="eyebrow mt-8">Palvelu · {company.region}</p>
+    <h1 class="mt-3 text-4xl md:text-5xl">{entry.data.title}</h1>
+    <p class="lede mt-4">{entry.data.summary} Työt Nokialla ja muualla Pirkanmaalla.</p>
+
+    <div class="mt-10 grid gap-10 lg:grid-cols-[minmax(0,1fr)_18rem]">
+      <aside class="h-fit border border-line bg-card p-5 lg:sticky lg:top-24 lg:col-start-2 lg:row-start-1">
+        <h2 class="text-2xl">Pyydä tarjous</h2>
+        <p class="mt-3 text-ink-soft">Kartoituskäynti on maksuton. Mitään ei tarvitse päättää käynnin aikana.</p>
+        <div class="mt-5 grid gap-3">
+          <a class="btn btn-primary" href={`/yhteystiedot?palvelu=${entry.id}`}>Pyydä tarjous</a>
+          <a class="btn btn-secondary" href="/varaa">Varaa käynti</a>
+          <a class="link text-center" href={`tel:${company.phoneTel}`}>Soita {company.phoneDisplay}</a>
+        </div>
+      </aside>
+
+      <div class="lg:col-start-1 lg:row-start-1">
+        <div class="rich-text text-ink">
+          <Content />
+        </div>
+
+        <h2 class="mt-10 text-2xl">Mitä työhön voi sisältyä</h2>
+        <ul class="mt-4 grid list-disc gap-2 pl-5">
+          {entry.data.includes.map((item) => <li>{item}</li>)}
+        </ul>
+
+        <div class="mt-10">
+          <Deduction />
+        </div>
+
+        <h2 class="mt-10 text-2xl">Usein kysyttyä</h2>
+        <dl class="mt-4 grid gap-4">
+          {
+            entry.data.faqs.map((faq) => (
+              <div class="border-t border-line pt-4">
+                <dt class="font-semibold">{faq.q}</dt>
+                <dd class="mt-2 max-w-3xl text-ink-soft">{faq.a}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </article>
+
+  <CTA title={`Pyydä tarjous: ${entry.data.title}`} />
+</BaseLayout>
