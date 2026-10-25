@@ -1,0 +1,103 @@
+---
+import { calculators, type CalculatorId } from "../data/prices";
+
+interface Props {
+  id: CalculatorId;
+  service: string;
+}
+
+const { id, service } = Astro.props;
+const calc = calculators[id];
+const priceKnown = typeof calc.unitPrice === "number" && calc.unitPrice > 0;
+---
+
+<section class="mt-10 border border-line bg-card p-5 sm:p-6" aria-labelledby={`${id}-laskuri`}>
+  <h2 id={`${id}-laskuri`} class="text-2xl">{calc.title}</h2>
+  <p class="mt-3 max-w-2xl text-ink-soft">{calc.hint}</p>
+
+  <form class="mt-6 grid gap-4" data-price-calculator data-service={service} data-unit={calc.unit} data-noun={calc.unitNoun} data-price={priceKnown ? String(calc.unitPrice) : ""}>
+    <div class="field max-w-xs">
+      <label for={`${id}-maara`}>{calc.question}</label>
+      <div class="flex items-center gap-3">
+        <input
+          id={`${id}-maara`}
+          name="maara"
+          type="number"
+          inputmode="decimal"
+          min={calc.min}
+          step={calc.step}
+          value={calc.initial}
+          required
+        />
+        <span class="font-semibold">{calc.unit}</span>
+      </div>
+    </div>
+
+    <p class="font-serif text-3xl" data-price-result aria-live="polite"></p>
+    <p class="text-sm text-ink-soft" data-price-note></p>
+
+    <div>
+      <a class="btn btn-primary" data-price-quote href={`/yhteystiedot?palvelu=${service}`}>Pyydä tarjous</a>
+    </div>
+  </form>
+</section>
+
+<script>
+  const money = new Intl.NumberFormat("fi-FI", { style: "currency", currency: "EUR" });
+  const amount = new Intl.NumberFormat("fi-FI", { maximumFractionDigits: 1 });
+
+  function quoteHref(service: string, text: string) {
+    const params = new URLSearchParams({ palvelu: service, viesti: text });
+    return `/yhteystiedot?${params.toString()}`;
+  }
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("[data-price-calculator]")) {
+    if (form.dataset.bound === "true") continue;
+    form.dataset.bound = "true";
+
+    const input = form.querySelector<HTMLInputElement>("input[name='maara']");
+    const result = form.querySelector<HTMLElement>("[data-price-result]");
+    const note = form.querySelector<HTMLElement>("[data-price-note]");
+    const quote = form.querySelector<HTMLAnchorElement>("[data-price-quote]");
+    const service = form.dataset.service ?? "";
+    const unit = form.dataset.unit ?? "";
+    const noun = form.dataset.noun ?? unit;
+    const unitPrice = form.dataset.price ? Number(form.dataset.price) : Number.NaN;
+
+    const render = () => {
+      if (!input || !result || !note || !quote) return;
+      const value = Number(input.value);
+      if (!Number.isFinite(value) || value <= 0) {
+        result.textContent = "Kirjoita mitta.";
+        note.textContent = "";
+        quote.href = `/yhteystiedot?palvelu=${encodeURIComponent(service)}`;
+        return;
+      }
+
+      const measure = `${amount.format(value)} ${noun}`;
+      if (!Number.isFinite(unitPrice) || unitPrice <= 0) {
+        result.textContent = measure;
+        note.textContent =
+          unit === "kpl"
+            ? "Summa näkyy tässä, kun asennuksen hinta per ovi on lisätty."
+            : "Summa näkyy tässä, kun hinta per metri on lisätty.";
+      } else {
+        const total = value * unitPrice;
+        result.textContent = `${measure} × ${money.format(unitPrice)} = ${money.format(total)}`;
+        note.textContent = "Arvio. Lopullinen hinta vahvistetaan tarjouksessa.";
+      }
+
+      const detail =
+        unit === "kpl"
+          ? `Väliovien asennus, ${amount.format(value)} ovea.`
+          : service === "rannien-puhdistus"
+            ? `Rännien puhdistus, ${amount.format(value)} metriä.`
+            : `Ilmalämpöpumppu, ulko- ja sisäyksikön väli ${amount.format(value)} metriä.`;
+      quote.href = quoteHref(service, detail);
+    };
+
+    input?.addEventListener("input", render);
+    form.addEventListener("submit", (event) => event.preventDefault());
+    render();
+  }
+</script>

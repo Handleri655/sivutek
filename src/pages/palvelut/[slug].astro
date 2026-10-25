@@ -5,6 +5,8 @@ import BaseLayout from "../../layouts/BaseLayout.astro";
 import JsonLd from "../../components/JsonLd.astro";
 import Deduction from "../../components/Deduction.astro";
 import CTA from "../../components/CTA.astro";
+import HeatPumpCalculator from "../../components/HeatPumpCalculator.astro";
+import PriceCalculator from "../../components/PriceCalculator.astro";
 import { company } from "../../data/company";
 import { breadcrumb, faqPage, serviceSchema } from "../../lib/jsonld";
 
@@ -72,6 +74,12 @@ const url = new URL(`/palvelut/${entry.id}`, company.url).toString();
         <div class="rich-text text-ink">
           <Content />
         </div>
+
+        {entry.data.calculator === "ilmalampopumppu" ? (
+          <HeatPumpCalculator service={entry.id} />
+        ) : (
+          entry.data.calculator && <PriceCalculator id={entry.data.calculator} service={entry.id} />
+        )}
 
         <h2 class="mt-10 text-2xl">Mitä työhön voi sisältyä</h2>
         <ul class="mt-4 grid list-disc gap-2 pl-5">

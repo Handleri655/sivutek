@@ -10,6 +10,7 @@ const palvelut = defineCollection({
     order: z.number(),
     summary: z.string(),
     includes: z.array(z.string()),
+    calculator: z.enum(["ilmalampopumppu", "valiovi", "ranni"]).optional(),
     faqs: z.array(
       z.object({
         q: z.string(),

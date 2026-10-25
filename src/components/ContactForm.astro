@@ -159,11 +159,15 @@ const selectedSlug = palvelut.some((item) => item.id === selected) ? selected : 
     if (form.dataset.bound === "true") continue;
     form.dataset.bound = "true";
 
+    const params = new URLSearchParams(window.location.search);
     const service = form.querySelector<HTMLSelectElement>("#palvelu");
-    const requested = new URLSearchParams(window.location.search).get("palvelu");
+    const requested = params.get("palvelu");
     if (service && requested && [...service.options].some((option) => option.value === requested)) {
       service.value = requested;
     }
+    const message = form.querySelector<HTMLTextAreaElement>("#viesti");
+    const preset = params.get("viesti");
+    if (message && preset && message.value.trim() === "") message.value = preset;
 
     for (const field of fieldsOf(form)) {
       field.addEventListener("invalid", () => {

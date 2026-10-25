@@ -36,7 +36,7 @@ export const company = {
   formProviderName: "FormSubmit",
   formProviderUrl: "https://formsubmit.co",
   householdDeductionUrl:
-    "https://www.vero.fi/henkiloasiakkaat/verokortti-ja-veroilmoitus/tulot-ja-vahennykset/kotitalousvahennys/",
+    "https://www.vero.fi/henkiloasiakkaat/vahennykset/kotitalousvahennys/",
   // Cloudflare Web Analytics -tunniste. Tyhjä = ei seurantaa.
   analyticsToken: "" as string,
 };

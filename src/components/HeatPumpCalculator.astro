@@ -1,0 +1,180 @@
+---
+import { heatPumpPrices } from "../data/prices";
+
+interface Props {
+  service: string;
+}
+
+const { service } = Astro.props;
+const prices = heatPumpPrices;
+---
+
+<section class="mt-10 border border-line bg-card p-5 sm:p-6" aria-labelledby="ilmalampopumppu-laskuri">
+  <h2 id="ilmalampopumppu-laskuri" class="text-2xl">{prices.title}</h2>
+  <p class="mt-3 max-w-2xl text-ink-soft">
+    Haarukka perustuu käyttötarkoitukseen ja alueen kokoon. Putkivedon pituus ja seinän timanttiporaus vaikuttavat
+    hintaan, ja ne lähtevät mukaan tarjouspyyntöön.
+  </p>
+
+  <form
+    class="mt-6 grid gap-5"
+    data-heat-calculator
+    data-service={service}
+    data-heat-max={prices.heating.maxArea}
+    data-heat-low={prices.heating.low}
+    data-heat-high={prices.heating.high}
+    data-cool-max={prices.cooling.maxArea}
+    data-cool-low={prices.cooling.low}
+    data-cool-high={prices.cooling.high}
+  >
+    <fieldset>
+      <legend class="font-semibold">Käyttötarkoitus</legend>
+      <div class="mt-2 grid gap-2 sm:grid-cols-3">
+        <label class="flex min-h-12 items-center gap-3 border border-line bg-white px-3">
+          <input type="radio" name="tarkoitus" value="lammitys" checked />
+          Lämmitys
+        </label>
+        <label class="flex min-h-12 items-center gap-3 border border-line bg-white px-3">
+          <input type="radio" name="tarkoitus" value="viilennys" />
+          Viilennys
+        </label>
+        <label class="flex min-h-12 items-center gap-3 border border-line bg-white px-3">
+          <input type="radio" name="tarkoitus" value="molemmat" />
+          Molemmat
+        </label>
+      </div>
+    </fieldset>
+
+    <div class="grid gap-4 sm:grid-cols-2">
+      <div class="field">
+        <label for="ilp-ala">Lämmitettävän tai viilennettävän alueen koko</label>
+        <div class="flex items-center gap-3">
+          <input id="ilp-ala" name="ala" type="number" inputmode="numeric" min={prices.area.min} step={prices.area.step} value={prices.area.initial} required />
+          <span class="font-semibold">m²</span>
+        </div>
+      </div>
+      <div class="field">
+        <label for="ilp-putki">Ulkoyksikön ja sisäyksikön välinen putkiveto</label>
+        <div class="flex items-center gap-3">
+          <input id="ilp-putki" name="putki" type="number" inputmode="decimal" min={prices.pipe.min} step={prices.pipe.step} value={prices.pipe.initial} required />
+          <span class="font-semibold">m</span>
+        </div>
+        <p class="text-sm text-ink-soft">Mittaa reitti mutkineen.</p>
+      </div>
+    </div>
+
+    <div class="field max-w-md">
+      <label for="ilp-poraus">Seinän timanttiporaus</label>
+      <select id="ilp-poraus" name="poraus">
+        <option value="ei">Ei tarvita</option>
+        <option value="kylla">Tarvitaan</option>
+        <option value="eos">En tiedä</option>
+      </select>
+    </div>
+
+    <p class="font-serif text-3xl" data-heat-result aria-live="polite"></p>
+    <p class="max-w-2xl text-sm text-ink-soft" data-heat-note></p>
+
+    <div>
+      <a class="btn btn-primary" data-heat-quote href={`/yhteystiedot?palvelu=${service}`}>Pyydä tarjous</a>
+    </div>
+  </form>
+</section>
+
+<script>
+  const euros = new Intl.NumberFormat("fi-FI", { maximumFractionDigits: 0 });
+  const amount = new Intl.NumberFormat("fi-FI", { maximumFractionDigits: 1 });
+
+  const purposeLabel: Record<string, string> = {
+    lammitys: "lämmitys",
+    viilennys: "viilennys",
+    molemmat: "lämmitys ja viilennys",
+  };
+  const drillLabel: Record<string, string> = {
+    ei: "ei",
+    kylla: "kyllä",
+    eos: "ei tiedossa",
+  };
+
+  for (const form of document.querySelectorAll<HTMLFormElement>("[data-heat-calculator]")) {
+    if (form.dataset.bound === "true") continue;
+    form.dataset.bound = "true";
+
+    const area = form.querySelector<HTMLInputElement>("input[name='ala']");
+    const pipe = form.querySelector<HTMLInputElement>("input[name='putki']");
+    const drill = form.querySelector<HTMLSelectElement>("select[name='poraus']");
+    const result = form.querySelector<HTMLElement>("[data-heat-result]");
+    const note = form.querySelector<HTMLElement>("[data-heat-note]");
+    const quote = form.querySelector<HTMLAnchorElement>("[data-heat-quote]");
+    const service = form.dataset.service ?? "";
+    const heating = {
+      maxArea: Number(form.dataset.heatMax),
+      low: Number(form.dataset.heatLow),
+      high: Number(form.dataset.heatHigh),
+    };
+    const cooling = {
+      maxArea: Number(form.dataset.coolMax),
+      low: Number(form.dataset.coolLow),
+      high: Number(form.dataset.coolHigh),
+    };
+
+    const rangeText = (low: number, high: number) => `${euros.format(low)}–${euros.format(high)} €`;
+
+    const render = () => {
+      if (!area || !pipe || !drill || !result || !note || !quote) return;
+      const purpose = form.querySelector<HTMLInputElement>("input[name='tarkoitus']:checked")?.value ?? "lammitys";
+      const square = Number(area.value);
+      const metres = Number(pipe.value);
+      const valid = Number.isFinite(square) && square > 0 && Number.isFinite(metres) && metres > 0;
+
+      if (!valid) {
+        result.textContent = "Täytä koko ja putkiveto.";
+        note.textContent = "";
+        quote.href = `/yhteystiedot?palvelu=${encodeURIComponent(service)}`;
+        return;
+      }
+
+      let shown = "";
+      if (purpose === "lammitys" && square <= heating.maxArea) {
+        shown = `yleensä noin ${rangeText(heating.low, heating.high)}`;
+        result.textContent = shown;
+        note.textContent = `Laadukas lämmittävä ilmalämpöpumppu alle ${heating.maxArea} neliön asuntoon, asennettuna. Putkivedon pituus ja mahdollinen timanttiporaus vaikuttavat hintaan. Lopullinen hinta vahvistetaan tarjouksessa.`;
+      } else if (purpose === "lammitys") {
+        result.textContent = "Tarjous";
+        note.textContent = `Haarukka yleensä noin ${rangeText(heating.low, heating.high)} koskee alle ${heating.maxArea} neliön asuntoa. Suurempi kohde hinnoitellaan tarjouksessa.`;
+      } else if (purpose === "viilennys" && square <= cooling.maxArea) {
+        shown = `tyypillisesti noin ${rangeText(cooling.low, cooling.high)}`;
+        result.textContent = shown;
+        note.textContent = `Halvimmat laadukkaat viilentävät pumput alle ${cooling.maxArea} neliön tilaan, asennettuna. Putkivedon pituus ja mahdollinen timanttiporaus vaikuttavat hintaan. Lopullinen hinta vahvistetaan tarjouksessa.`;
+      } else if (purpose === "viilennys") {
+        result.textContent = "Tarjous";
+        note.textContent = `Haarukka tyypillisesti noin ${rangeText(cooling.low, cooling.high)} koskee alle ${cooling.maxArea} neliön tilaa. Suurempi kohde hinnoitellaan tarjouksessa.`;
+      } else {
+        result.textContent = "Tarjous";
+        note.textContent =
+          "Lämmitykselle ja viilennykselle yhdessä ei ole erillistä hintahaarukkaa. Hinta lasketaan tarjouksessa alueen koon, putkivedon ja seinän mukaan.";
+      }
+
+      if (drill.value === "kylla") {
+        note.textContent += " Timanttiporaus kirjataan tarjouspyyntöön.";
+      }
+
+      const text = [
+        `Ilmalämpöpumppu, ${purposeLabel[purpose] ?? purpose}.`,
+        `Alue ${amount.format(square)} m².`,
+        `Putkiveto ${amount.format(metres)} metriä.`,
+        `Timanttiporaus: ${drillLabel[drill.value] ?? drill.value}.`,
+        shown ? `Haarukka sivulla: ${shown} asennettuna.` : "",
+      ]
+        .filter(Boolean)
+        .join(" ");
+      const params = new URLSearchParams({ palvelu: service, viesti: text });
+      quote.href = `/yhteystiedot?${params.toString()}`;
+    };
+
+    form.addEventListener("input", render);
+    form.addEventListener("change", render);
+    form.addEventListener("submit", (event) => event.preventDefault());
+    render();
+  }
+</script>
