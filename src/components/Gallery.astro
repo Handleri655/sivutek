@@ -8,42 +8,142 @@ export interface GalleryItem {
   location?: string;
   image?: ImageMetadata;
   imageAlt?: string;
+  category?: "keittio" | "viimeistely" | "lvi" | "ulkotyot";
 }
 
 interface Props {
   items: GalleryItem[];
+  showFilters?: boolean;
+  featureFirst?: boolean;
 }
 
-const { items } = Astro.props;
+const { items, showFilters = false, featureFirst = false } = Astro.props;
+
+const categoryLabels = [
+  { id: "keittio", label: "Keittiöt" },
+  { id: "viimeistely", label: "Viimeistely" },
+  { id: "lvi", label: "LVI" },
+  { id: "ulkotyot", label: "Ulkotyöt" },
+] as const;
+
+const filters = categoryLabels.filter((entry) => items.some((item) => item.category === entry.id));
 ---
 
 {
   items.length > 0 && (
-    <ul class="grid list-none gap-4 p-0 md:grid-cols-3">
-      {items.map((item) => (
-        <li class="border border-line bg-card">
-          {item.image ? (
-            <div class="aspect-[4/3] overflow-hidden bg-paper-deep">
-              <Image
-                src={item.image}
-                alt={item.imageAlt || `${item.title}${item.location ? `, ${item.location}` : ""}`}
-                widths={[400, 800]}
-                sizes="(min-width: 768px) 33vw, 100vw"
-                class="h-full w-full object-cover"
-              />
+    <div data-gallery>
+      {showFilters && filters.length > 1 && (
+        <div class="mb-6 flex flex-wrap gap-2" role="group" aria-label="Rajaa kohteita">
+          <button type="button" class="filter-btn" data-filter="kaikki" aria-pressed="true">
+            Kaikki
+          </button>
+          {filters.map((entry) => (
+            <button type="button" class="filter-btn" data-filter={entry.id} aria-pressed="false">
+              {entry.label}
+            </button>
+          ))}
+        </div>
+      )}
+      <ul class="grid list-none gap-4 p-0 md:grid-cols-3">
+        {items.map((item, index) => (
+          <li
+            class:list={["border border-line bg-card", featureFirst && index === 0 && "md:col-span-2"]}
+            data-category={item.category || "muu"}
+          >
+            {item.image ? (
+              <button
+                type="button"
+                class="gallery-zoom block w-full cursor-zoom-in bg-paper-deep text-left"
+                data-zoom={item.image.src}
+                data-alt={item.imageAlt || item.title}
+                data-caption={`${item.title}. ${item.summary}`}
+                aria-label={`Suurenna kuva: ${item.imageAlt || item.title}`}
+              >
+                <span class:list={["block overflow-hidden", featureFirst && index === 0 ? "md:aspect-[16/9] aspect-[4/3]" : "aspect-[4/3]"]}>
+                  <Image
+                    src={item.image}
+                    alt=""
+                    widths={[400, 800, 1400]}
+                    sizes={featureFirst && index === 0 ? "(min-width: 768px) 66vw, 100vw" : "(min-width: 768px) 33vw, 100vw"}
+                    class="h-full w-full object-cover"
+                  />
+                </span>
+              </button>
+            ) : (
+              <div class="flex aspect-[4/3] items-center justify-center bg-paper-deep p-6 text-center">
+                <p class="font-serif text-xl">Kuva tulossa</p>
+              </div>
+            )}
+            <div class="p-5">
+              <h3 class="text-xl">{item.title}</h3>
+              {item.location && <p class="mt-1 text-sm text-ink-soft">{item.location}</p>}
+              <p class="mt-2 text-ink-soft">{item.summary}</p>
             </div>
-          ) : (
-            <div class="flex aspect-[4/3] items-center justify-center bg-paper-deep p-6 text-center">
-              <p class="font-serif text-xl">Kuva tulossa</p>
-            </div>
-          )}
-          <div class="p-5">
-            <h3 class="text-xl">{item.title}</h3>
-            {item.location && <p class="mt-1 text-sm text-ink-soft">{item.location}</p>}
-            <p class="mt-2 text-ink-soft">{item.summary}</p>
-          </div>
-        </li>
-      ))}
-    </ul>
+          </li>
+        ))}
+      </ul>
+      <dialog class="lightbox">
+        <form method="dialog" class="mb-3 flex justify-end">
+          <button type="submit" class="btn btn-primary">Sulje</button>
+        </form>
+        <img alt="" />
+        <p class="mt-3 text-sm text-mist"></p>
+      </dialog>
+    </div>
   )
 }
+
+<script>
+  function bindGalleries() {
+    document.querySelectorAll("[data-gallery]").forEach((root) => {
+      if (!(root instanceof HTMLElement) || root.dataset.ready === "true") return;
+      root.dataset.ready = "true";
+
+      const dialog = root.querySelector("dialog");
+      const full = dialog?.querySelector("img");
+      const caption = dialog?.querySelector("p");
+      if (!(dialog instanceof HTMLDialogElement) || !(full instanceof HTMLImageElement) || !(caption instanceof HTMLParagraphElement)) {
+        return;
+      }
+
+      root.querySelectorAll(".gallery-zoom").forEach((button) => {
+        button.addEventListener("click", () => {
+          if (!(button instanceof HTMLButtonElement)) return;
+          full.src = button.dataset.zoom || "";
+          full.alt = button.dataset.alt || "";
+          caption.textContent = button.dataset.caption || "";
+          dialog.showModal();
+        });
+      });
+
+      dialog.addEventListener("click", (event) => {
+        if (event.target === dialog) dialog.close();
+      });
+
+      dialog.addEventListener("close", () => {
+        full.removeAttribute("src");
+        full.alt = "";
+      });
+
+      const filterButtons = [...root.querySelectorAll("[data-filter]")];
+      const cards = [...root.querySelectorAll("[data-category]")];
+      filterButtons.forEach((button) => {
+        button.addEventListener("click", () => {
+          if (!(button instanceof HTMLButtonElement)) return;
+          const filter = button.dataset.filter || "kaikki";
+          filterButtons.forEach((entry) => {
+            if (entry instanceof HTMLButtonElement) entry.setAttribute("aria-pressed", String(entry === button));
+          });
+          cards.forEach((card) => {
+            if (!(card instanceof HTMLElement)) return;
+            const show = filter === "kaikki" || card.dataset.category === filter;
+            card.hidden = !show;
+          });
+        });
+      });
+    });
+  }
+
+  bindGalleries();
+  document.addEventListener("astro:page-load", bindGalleries);
+</script>

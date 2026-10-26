@@ -15,7 +15,7 @@ export function localBusiness(services: ServiceNode[]) {
     url: company.url,
     telephone: company.phoneTel,
     email: company.email,
-    image: new URL("/og-image.png", company.url).toString(),
+    image: new URL("/og-image.jpg", company.url).toString(),
     address: {
       "@type": "PostalAddress",
       addressLocality: company.city,

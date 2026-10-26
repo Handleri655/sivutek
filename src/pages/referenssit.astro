@@ -12,6 +12,7 @@ const items: GalleryItem[] = referenssit.map((entry) => ({
   location: entry.data.location,
   image: entry.data.image,
   imageAlt: entry.data.imageAlt,
+  category: entry.data.category,
 }));
 const isEmpty = items.length === 0;
 ---
@@ -33,7 +34,7 @@ const isEmpty = items.length === 0;
         <>
           <p class="lede mt-4">Keittiöasennuksia, viimeistelytöitä, LVI-töitä sekä portaita ja terasseja.</p>
           <div class="mt-8">
-            <Gallery items={items} />
+            <Gallery items={items} showFilters featureFirst />
           </div>
         </>
       )

@@ -4,5 +4,6 @@ summary: "Asennettu vaalea väliovi karmeineen."
 imageAlt: "Vaalea peiliovi valkoisessa karmissa."
 image: ./valiovi.jpg
 order: 7
+category: viimeistely
 placeholder: false
 ---

@@ -4,7 +4,7 @@ import { googleReviews } from "../data/reviews";
 const stars = "★★★★★";
 ---
 
-<section class="section wrap" aria-labelledby="arvostelut-otsikko">
+<section class="section wrap reveal" id="arvostelut" aria-labelledby="arvostelut-otsikko">
   <p class="eyebrow">Asiakkaat</p>
   <div class="mt-3 flex flex-wrap items-end justify-between gap-4">
     <h2 id="arvostelut-otsikko" class="text-3xl md:text-4xl">Google-arvostelut</h2>
@@ -17,7 +17,7 @@ const stars = "★★★★★";
   <ul class="mt-8 grid list-none gap-4 p-0 md:grid-cols-3">
     {
       googleReviews.items.map((review) => (
-        <li class="flex h-full flex-col border border-line bg-card p-5">
+        <li class="lift flex h-full flex-col border border-line bg-card p-5">
           <p class="text-accent-fill" aria-hidden="true">
             {stars.slice(0, review.rating)}
           </p>

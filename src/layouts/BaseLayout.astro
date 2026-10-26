@@ -27,7 +27,7 @@ const fullTitle = title.includes(company.name) ? title : `${title} | ${company.n
 const site = Astro.site ?? new URL(company.url);
 const path = Astro.url.pathname === "/" ? "/" : Astro.url.pathname.replace(/\/$/, "");
 const canonical = new URL(path, site).toString();
-const ogImage = new URL("/og-image.png", site).toString();
+const ogImage = new URL("/og-image.jpg", site).toString();
 const palvelut = await getPalvelut();
 const business = localBusiness(
   palvelut.map((entry) => ({

@@ -29,6 +29,7 @@ const referenssit = defineCollection({
       order: z.number().default(0),
       location: z.string().optional(),
       imageAlt: z.string().optional(),
+      category: z.enum(["keittio", "viimeistely", "lvi", "ulkotyot"]).optional(),
       placeholder: z.boolean().default(false),
       image: image().optional(),
     }),

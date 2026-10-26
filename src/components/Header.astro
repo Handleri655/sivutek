@@ -16,74 +16,58 @@ function isActive(href: string) {
 }
 ---
 
-<header
-  class:list={[
-    "sticky top-0 z-50 h-16 border-b backdrop-blur",
-    overlay ? "border-white/15 bg-ink/80 text-white" : "border-line bg-paper/95",
-  ]}
->
+<header class:list={["site-header", overlay && "is-overlay"]}>
   <div class="wrap flex h-full items-center justify-between gap-4">
-    <a href="/" aria-label="Sivutek, etusivu" class:list={[overlay ? "text-white" : "text-ink"]}>
+    <a href="/" aria-label="Sivutek, etusivu" class:list={["site-logo", overlay ? "text-white" : "text-ink"]}>
       <Logo onDark={overlay} />
     </a>
 
-    <nav class="hidden items-center gap-6 lg:flex" aria-label="Päävalikko">
-      {
-        navigation.map((item) => (
-          <a
-            href={item.href}
-            class:list={[
-              "font-medium",
-              overlay ? "text-white hover:text-sand" : "hover:text-accent",
-              isActive(item.href) &&
-                (overlay
-                  ? "text-sand underline decoration-2 underline-offset-8"
-                  : "text-accent underline decoration-2 underline-offset-8"),
-            ]}
-            aria-current={isActive(item.href) ? "page" : undefined}
-          >
-            {item.label}
-          </a>
-        ))
-      }
-      <a class="btn btn-primary" href={`tel:${company.phoneTel}`} aria-label={`Soita ${company.phoneDisplay}`}>
+    <nav class="site-nav" aria-label="Päävalikko">
+      <div class="nav-track">
+        {
+          navigation.map((item) => (
+            <a href={item.href} class="nav-link" aria-current={isActive(item.href) ? "page" : undefined}>
+              {item.label}
+            </a>
+          ))
+        }
+      </div>
+      <a class="nav-call" href={`tel:${company.phoneTel}`} aria-label={`Soita ${company.phoneDisplay}`}>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M7.2 3.8c.4-.4 1-.5 1.5-.3l2.2.9c.5.2.8.7.8 1.2l-.3 2.2c0 .4-.3.8-.6 1L9.4 10c.9 1.8 2.4 3.3 4.2 4.2l1.2-1.4c.2-.3.6-.6 1-.6l2.2-.3c.5 0 1 .3 1.2.8l.9 2.2c.2.5.1 1.1-.3 1.5l-1.3 1.3c-.4.4-1 .6-1.6.5C11.6 17.4 6.2 12 5.4 6.7c-.1-.6.1-1.2.5-1.6z"
+          ></path>
+        </svg>
         <span class="xl:hidden">Soita</span>
         <span class="hidden xl:inline">Soita {company.phoneDisplay}</span>
       </a>
     </nav>
 
-    <details class="relative lg:hidden">
-      <summary class="cursor-pointer rounded-sm px-3 py-2 font-semibold">Valikko</summary>
-      <nav
-        class="absolute right-0 z-50 mt-2 w-64 border border-line bg-card p-2 text-ink shadow-lg"
-        aria-label="Mobiilivalikko"
-      >
-        <ul class="m-0 grid list-none p-0">
+    <details class="nav-menu">
+      <summary class="nav-toggle">
+        <span class="nav-toggle-icon" aria-hidden="true"><span></span><span></span><span></span></span>
+        Valikko
+      </summary>
+      <nav class="nav-panel" aria-label="Mobiilivalikko">
+        <ul>
           {
             navigation.map((item) => (
               <li>
-                <a
-                  href={item.href}
-                  class="block px-3 py-3 font-medium hover:bg-paper"
-                  aria-current={isActive(item.href) ? "page" : undefined}
-                >
+                <a href={item.href} aria-current={isActive(item.href) ? "page" : undefined}>
                   {item.label}
                 </a>
               </li>
             ))
           }
           <li>
-            <a class="block px-3 py-3 font-semibold text-accent" href={`tel:${company.phoneTel}`}>
-              Soita {company.phoneDisplay}
-            </a>
+            <a class="nav-panel-call" href={`tel:${company.phoneTel}`}>Soita {company.phoneDisplay}</a>
           </li>
           <li>
-            <a class="block px-3 py-3 font-medium" href={company.smsHref}>Lähetä tekstiviesti</a>
+            <a href={company.smsHref}>Lähetä tekstiviesti</a>
           </li>
           <li>
-            <a class="block px-3 py-3 font-medium" href={company.whatsappHref} target="_blank" rel="noopener noreferrer">
-              WhatsApp
-            </a>
+            <a href={company.whatsappHref} target="_blank" rel="noopener noreferrer">WhatsApp</a>
           </li>
         </ul>
       </nav>

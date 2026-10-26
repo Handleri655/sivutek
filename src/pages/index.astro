@@ -6,7 +6,9 @@ import Deduction from "../components/Deduction.astro";
 import Gallery from "../components/Gallery.astro";
 import CTA from "../components/CTA.astro";
 import GoogleReviews from "../components/GoogleReviews.astro";
+import { Image } from "astro:assets";
 import { company } from "../data/company";
+import { featuredReference, serviceImages } from "../data/serviceImages";
 import { getPalvelut, getReferenssit } from "../lib/content";
 import type { GalleryItem } from "../components/Gallery.astro";
 
@@ -18,6 +20,7 @@ const galleryItems: GalleryItem[] = referenssit.map((entry) => ({
   location: entry.data.location,
   image: entry.data.image,
   imageAlt: entry.data.imageAlt,
+  category: entry.data.category,
 }));
 
 const reasons = [
@@ -66,24 +69,7 @@ const steps = [
 >
   <Hero />
 
-  <section class="border-y border-line bg-card" aria-label="Lyhyesti">
-    <ul class="wrap grid list-none gap-6 p-0 py-6 sm:grid-cols-3 sm:gap-0 sm:py-0">
-      <li class="sm:px-6 sm:py-6 sm:pl-0">
-        <p class="font-serif text-2xl">Maksuton kartoitus</p>
-        <p class="mt-1 text-ink-soft">Ennen tarjousta, kohteessa.</p>
-      </li>
-      <li class="border-line sm:border-l sm:px-6 sm:py-6">
-        <p class="font-serif text-2xl">Tarjous ensin</p>
-        <p class="mt-1 text-ink-soft">Saat tarjouksen ennen päätöstä.</p>
-      </li>
-      <li class="border-line sm:border-l sm:px-6 sm:py-6">
-        <p class="font-serif text-2xl">Suora yhteys</p>
-        <p class="mt-1 text-ink-soft">Soitat tai viestit suoraan yritykseen.</p>
-      </li>
-    </ul>
-  </section>
-
-  <section class="section wrap" id="palvelut" aria-labelledby="palvelut-otsikko">
+  <section class="section wrap reveal" id="palvelut" aria-labelledby="palvelut-otsikko">
     <p class="eyebrow">Palvelut</p>
     <h2 id="palvelut-otsikko" class="mt-3 text-3xl md:text-4xl">Mitä teemme</h2>
     <p class="lede mt-4">
@@ -99,20 +85,42 @@ const steps = [
             title={entry.data.title}
             summary={entry.data.summary}
             slug={entry.id}
+            image={serviceImages[entry.id]?.image}
+            imageAlt={serviceImages[entry.id]?.alt}
           />
         ))
       }
     </div>
   </section>
 
-  <section class="section border-y border-line bg-card" aria-labelledby="miksi-otsikko">
+  <section class="featured-work" aria-labelledby="kohde-otsikko">
+    <Image
+      src={featuredReference.image}
+      alt={featuredReference.alt}
+      widths={[640, 1024, 1600]}
+      sizes="100vw"
+      class="featured-work-photo"
+    />
+    <div class="featured-work-copy wrap">
+      <p class="font-sans text-xs font-semibold tracking-[0.16em] text-sand uppercase">Tehty työ</p>
+      <h2 id="kohde-otsikko" class="mt-3 max-w-3xl text-3xl text-white md:text-5xl">{featuredReference.title}</h2>
+      <p class="mt-3 max-w-xl text-lg text-mist">{featuredReference.summary}</p>
+      <p class="mt-6">
+        <a class="font-semibold text-white underline decoration-white/50 underline-offset-4" href={featuredReference.href}>
+          Katso kaikki referenssit
+        </a>
+      </p>
+    </div>
+  </section>
+
+  <section class="section border-y border-line bg-card reveal" aria-labelledby="miksi-otsikko">
     <div class="wrap">
       <p class="eyebrow">Miksi Sivutek</p>
       <h2 id="miksi-otsikko" class="mt-3 text-3xl md:text-4xl">Miksi valita meidät</h2>
       <ul class="mt-8 grid list-none gap-4 p-0 md:grid-cols-2">
         {
           reasons.map((reason) => (
-            <li class="reason p-5">
+            <li class="reason lift p-5">
               <h3 class="text-2xl">{reason.title}</h3>
               <p class="mt-2 text-ink-soft">{reason.text}</p>
             </li>
@@ -124,7 +132,7 @@ const steps = [
 
   <GoogleReviews />
 
-  <section class="section wrap" id="miten" aria-labelledby="miten-otsikko">
+  <section class="section wrap reveal" id="miten" aria-labelledby="miten-otsikko">
     <p class="eyebrow">Työn kulku</p>
     <h2 id="miten-otsikko" class="mt-3 text-3xl md:text-4xl">Näin työ etenee</h2>
     <ol class="mt-8 grid list-none gap-6 p-0 md:grid-cols-4">
