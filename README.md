@@ -29,6 +29,7 @@ Valmis sivusto syntyy kansioon `dist`.
 | Puhelin, sähköposti, Y-tunnus, toiminta-alue, kalenteri | `src/data/company.ts` |
 | Palveluiden tekstit | `src/content/palvelut/*.md` |
 | Ilmalämpöpumpun hintahaarukat sekä välioven ja rännien yksikköhinnat | `src/data/prices.ts` |
+| Google-arvostelut ja arvostelulinkki | `src/data/reviews.ts` |
 | Kohdekuvat | `src/content/referenssit/` |
 | Etusivun iso kuva | `src/assets/hero.jpg` |
 | Tietosuojaseloste | `src/pages/tietosuoja.astro` |

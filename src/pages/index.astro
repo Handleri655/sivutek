@@ -5,6 +5,7 @@ import ServiceCard from "../components/ServiceCard.astro";
 import Deduction from "../components/Deduction.astro";
 import Gallery from "../components/Gallery.astro";
 import CTA from "../components/CTA.astro";
+import GoogleReviews from "../components/GoogleReviews.astro";
 import { company } from "../data/company";
 import { getPalvelut, getReferenssit } from "../lib/content";
 import type { GalleryItem } from "../components/Gallery.astro";
@@ -21,20 +22,20 @@ const galleryItems: GalleryItem[] = referenssit.map((entry) => ({
 
 const reasons = [
   {
-    title: "Maksuton kartoituskäynti",
-    text: "Kohde käydään läpi paikan päällä ennen tarjousta. Käynti on maksuton Pirkanmaalla ja sen ympäristössä.",
+    title: "Asiakaslähtöisyys",
+    text: "Lähtökohtana on aina paras mahdollinen laatu ja lopputulos. Asiakastyytyväisyys edellä mennään aina.",
   },
   {
-    title: "Tarjous ennen päätöstä",
-    text: "Saat tarjouksen ja päätät itse, etenetkö. Työn sisältö sovitaan ennen aloitusta.",
+    title: "Laatu edellä",
+    text: "Työt toteutetaan määräysten mukaisesti, huolellisesti viimeisteltynä ja kestävää lopputulosta tavoitellen jokaisessa projektissa.",
   },
   {
-    title: "Aikataulu kohteen mukaan",
-    text: "Kerro, milloin työ olisi ajankohtainen. Vapaa aika katsotaan työtilanteen mukaan.",
+    title: "Selkeä hinnoittelu",
+    text: "Ei yllätyksiä. Saat aina reilun ja läpinäkyvän tarjouksen.",
   },
   {
-    title: "Paikallinen tekijä",
-    text: "Sivutek toimii Nokialta. Yhteydenotto tulee suoraan yritykseen.",
+    title: "Luotettava toteutus",
+    text: "Aikataulut suunnitellaan asiakkaan kanssa. Jokainen projekti tehdään huolellisesti ja kestävästi alusta loppuun.",
   },
 ];
 
@@ -107,11 +108,11 @@ const steps = [
   <section class="section border-y border-line bg-card" aria-labelledby="miksi-otsikko">
     <div class="wrap">
       <p class="eyebrow">Miksi Sivutek</p>
-      <h2 id="miksi-otsikko" class="mt-3 text-3xl md:text-4xl">Selkeä työ, suora yhteys</h2>
+      <h2 id="miksi-otsikko" class="mt-3 text-3xl md:text-4xl">Miksi valita meidät</h2>
       <ul class="mt-8 grid list-none gap-4 p-0 md:grid-cols-2">
         {
           reasons.map((reason) => (
-            <li class="border-l-4 border-accent-fill bg-paper p-5">
+            <li class="reason p-5">
               <h3 class="text-2xl">{reason.title}</h3>
               <p class="mt-2 text-ink-soft">{reason.text}</p>
             </li>
@@ -120,6 +121,8 @@ const steps = [
       </ul>
     </div>
   </section>
+
+  <GoogleReviews />
 
   <section class="section wrap" id="miten" aria-labelledby="miten-otsikko">
     <p class="eyebrow">Työn kulku</p>

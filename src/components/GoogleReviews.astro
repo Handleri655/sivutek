@@ -1,0 +1,51 @@
+---
+import { googleReviews } from "../data/reviews";
+
+const stars = "★★★★★";
+---
+
+<section class="section wrap" aria-labelledby="arvostelut-otsikko">
+  <p class="eyebrow">Asiakkaat</p>
+  <div class="mt-3 flex flex-wrap items-end justify-between gap-4">
+    <h2 id="arvostelut-otsikko" class="text-3xl md:text-4xl">Google-arvostelut</h2>
+    <p class="font-serif text-2xl">
+      {googleReviews.rating}/5
+      <span class="text-ink-soft">· {googleReviews.count} arvostelua</span>
+    </p>
+  </div>
+
+  <ul class="mt-8 grid list-none gap-4 p-0 md:grid-cols-3">
+    {
+      googleReviews.items.map((review) => (
+        <li class="flex h-full flex-col border border-line bg-card p-5">
+          <p class="text-accent-fill" aria-hidden="true">
+            {stars.slice(0, review.rating)}
+          </p>
+          <p class="sr-only">{review.rating} tähteä viidestä</p>
+          <blockquote class="mt-3 flex-1 text-ink">
+            <p>{review.text}</p>
+          </blockquote>
+          <p class="mt-4 font-semibold">{review.author}</p>
+          <p class="text-sm text-ink-soft">Google</p>
+        </li>
+      ))
+    }
+  </ul>
+
+  <aside class="mt-6 border border-line bg-card p-5 sm:p-6" aria-labelledby="jata-arvostelu">
+    <h3 id="jata-arvostelu" class="text-2xl">Jätä arvostelu</h3>
+    <p class="mt-2 max-w-2xl text-ink-soft">
+      Jos työ on tehty, arvostelu Googlessa auttaa seuraavaa asiakasta. Arvostelu kirjoitetaan Googleen.
+    </p>
+    <div class="mt-5 flex flex-col gap-3 sm:flex-row sm:items-center">
+      <a class="btn btn-primary" href={googleReviews.writeUrl} target="_blank" rel="noopener noreferrer">
+        Jätä arvostelu
+        <span class="sr-only">(avautuu uuteen välilehteen)</span>
+      </a>
+      <a class="link" href={googleReviews.listingUrl} target="_blank" rel="noopener noreferrer">
+        Näytä kaikki Google-arvostelut
+        <span class="sr-only">(avautuu uuteen välilehteen)</span>
+      </a>
+    </div>
+  </aside>
+</section>
