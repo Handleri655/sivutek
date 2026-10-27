@@ -30,7 +30,7 @@ export const company = {
   area: ["Nokia", "Tampere", "Ylöjärvi", "Pirkkala", "Kangasala", "Lempäälä"],
   // Vanhan sivun ajanvaraus: 30 min / Eelis. Tyhjä kenttä piilottaa kalenterin.
   bookingUrl:
-    "https://calendar.google.com/calendar/appointments/schedules/AcZssZ26u7yGYuTKVqcjpIsMR3liqlSAkOwd4SYOdarT-rf27ZwVW0V6u0aZpd1m5Xk_Tvied_EPpITB?gv=true",
+    "https://calendar.google.com/calendar/appointments/schedules/AcZssZ26u7yGYuTKVqcjpIsMR3liqlSAkOwd4SYOdarT-rf27ZwVW0V6u0aZpd1m5Xk_Tvied_EPpITB?gv=true&hl=fi",
   privacyUpdated: "27.10.2026",
   formSubmitAlias,
   formEndpoint,
