@@ -28,9 +28,10 @@ export const company = {
   region: "Pirkanmaa",
   url: "https://www.sivutek.com",
   area: ["Nokia", "Tampere", "Ylöjärvi", "Pirkkala", "Kangasala", "Lempäälä"],
-  // Google-kalenterin ajanvarauslinkki. Jätä tyhjäksi, kunnes linkki on tiedossa.
-  bookingUrl: "" as string,
-  privacyUpdated: "25.10.2026",
+  // Vanhan sivun ajanvaraus: 30 min / Eelis. Tyhjä kenttä piilottaa kalenterin.
+  bookingUrl:
+    "https://calendar.google.com/calendar/appointments/schedules/AcZssZ26u7yGYuTKVqcjpIsMR3liqlSAkOwd4SYOdarT-rf27ZwVW0V6u0aZpd1m5Xk_Tvied_EPpITB?gv=true",
+  privacyUpdated: "27.10.2026",
   formSubmitAlias,
   formEndpoint,
   formProviderName: "FormSubmit",

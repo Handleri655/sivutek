@@ -49,7 +49,7 @@ Malli jää sivulta pois niin kauan kuin sen `placeholder` on `true`. Etusivu, v
 
 ## Ajanvarauskalenteri
 
-Kun Google-kalenterin ajanvarauslinkki on tiedossa, liitä se kenttään `bookingUrl` tiedostossa `src/data/company.ts`. Tyhjä kenttä ei näytä paikkamerkkiä: sivulla `/varaa` on soitto ja tarjouspyyntö. Täytetty kenttä upottaa kalenterin.
+Ajanvarauskalenterin osoite on kentässä `bookingUrl` tiedostossa `src/data/company.ts`. Tyhjä kenttä ei näytä paikkamerkkiä: sivulla `/varaa` on soitto ja tarjouspyyntö. Täytetty kenttä upottaa kalenterin.
 
 ## Lomake
 
